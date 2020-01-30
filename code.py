@@ -11,16 +11,21 @@ db = client.mwj7
 #the active worksheet
 ws = wb.active
 
+people = []
 #iterate over rows in spreadsheet
 for row in ws.iter_rows(min_row=2):
 	person = {}
 	for cell in row:
 		if not cell.value is None:
-			#get column name for key 
+			#get column name for key
 			attr = ws.cell(column=cell.col_idx,row=1).value
 			#get cell value for value
 			person[attr] = cell.value
 	#insert json representation of person into mongo db here
-	#json_person = json.dumps(person)
+	people.append(person)
 	db.mwj7.insert(person)
+
+print(str(people))
+#json_output =  json.dumps(people)
+#Todo: Future code could save the json to a file and then import that into mongo
 
