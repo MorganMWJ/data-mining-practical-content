@@ -3,29 +3,40 @@
 # get a connection to MongoDB
 from pymongo import MongoClient
 
-user = 'eds'
-dbpath = 'nosql.dcs.aber.ac.uk/eds'
-password = '*********'
+user = 'mwj7'
+dbpath = 'nosql.dcs.aber.ac.uk/mwj7'
+password = 'ZcnrlM19FX'
 connection_string = 'mongodb://'+user+':'+password+'@'+dbpath
 
 client = MongoClient(connection_string)
 
-db = client.eds
+db = client.mwj7
 
 # walk the ship data directory to find the excel files
 
 import os
 import get_ships
 
-all_ships = []
+#import regular expressions
+import re
 
-ships_dir = '/aber/eds/mongodb/prac2/ABERSHIP_transcription_vtls004566921/ABERSHIP_transcription_vtls004566921'
+all_ships = []
+import pdb; pdb.set_trace()
+ships_dir = '/impacs/mwj7/Documents/data-mining-practical-content/Prac2/ABERSHIP_transcription_vtls004566921'
 
 for root, dirs, files in os.walk(ships_dir):
     for file in files:
         name, ext = os.path.splitext(file)
-        if ext == '.xlsx':
+        if ext == '.xlsx' and not re.match("^~&*", name):
+            print("Included: " + os.path.join(root,file))
             all_ships += get_ships.get_ships( os.path.join(root, file) )
+        else:
+            print("Excluded: " + os.path.join(root, file))
 
-result = db.eds.insert_many(all_ships)
+    print("Directories covered: " + str(len(dirs)))
+    for d in dirs:
+        print(os.path.join(root,d))
+
+
+result = db.mwj7.insert_many(all_ships)
 print(result)
